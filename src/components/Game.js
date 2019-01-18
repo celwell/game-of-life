@@ -9,7 +9,7 @@ class Game extends Component {
     this.state = {
       size: 40,
       running: false,
-      frameRate: 5,
+      frameRate: 5, // steps per second
     };
   }
 
