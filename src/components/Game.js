@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import Controls from './Controls';
 import Board from './Board';
 
@@ -13,12 +13,22 @@ class Game extends Component {
     };
   }
 
-  toggleRunning = () => {
-    (this.state.running ? this.pause() : this.play())
-    
-    this.setState({
-      running: ! this.state.running
+  toggleCell = (row, col) => {
+    this.setState((state) => {
+      let table = state.table.slice();
+      table[row][col] = ! table[row][col];
+      return {
+        table: table
+      };
     });
+  }
+  
+  toggleRunning = () => {
+    this.setState((state, props) => ({
+      running: ! state.running
+    }), () => (
+      this.state.running ? this.play() : this.pause()
+    ));
   }
 
   /* Given the 2d array 'table', the row index, and column index,
@@ -45,23 +55,21 @@ class Game extends Component {
   }
   
   step = () => {
-    const table = this.state.table.slice().map(
-      (row, r, originalTable) =>
-        row.map(
-          (cell, c) => {
-            const num_neighbors = this.numNeighbors(originalTable, r, c);
-            if (cell) { // cell is currenly live
-              return (num_neighbors === 2 || num_neighbors === 3);
-            } else { // cell if currently dead
-              return num_neighbors === 3;
+    this.setState((state) => ({
+      table: state.table.slice().map(
+        (row, r, originalTable) =>
+          row.map(
+            (cell, c) => {
+              const num_neighbors = this.numNeighbors(originalTable, r, c);
+              if (cell) { // cell is currenly live
+                return (num_neighbors === 2 || num_neighbors === 3);
+              } else { // cell if currently dead
+                return num_neighbors === 3;
+              }
             }
-          }
-        )
-    );
-    
-    this.setState({
-      table: table,
-    });
+          )
+      )
+    }));
   }
 
   play() {
@@ -72,24 +80,16 @@ class Game extends Component {
     clearInterval(this.interval);
   }
 
-  generateTable() {
-    return Array(this.state.size).fill().map(
-      () => Array(this.state.size).fill(false)
+  generateTable(size) {
+    return Array(size).fill().map(
+      () => Array(size).fill(false)
     );
   }
   
   resetTable = () => {
-    this.setState({
-      table: this.generateTable()
-    });
-  }
-
-  toggleCell = (row, col) => {
-    let table = this.state.table.slice();
-    table[row][col] = ! table[row][col];
-    this.setState({
-      table: table
-    });
+    this.setState((state) => ({
+      table: this.generateTable(state.size)
+    }));
   }
 
   componentDidMount() {
@@ -100,13 +100,13 @@ class Game extends Component {
     const { running, table } = this.state;
     
     return (
-      <div>
+      <Fragment>
         <Board table={table}
                toggleCellFn={this.toggleCell} />
         <Controls running={running}
                   toggleRunning={this.toggleRunning}
                   reset={this.resetTable} />
-      </div>
+      </Fragment>
     );
   }
 }
