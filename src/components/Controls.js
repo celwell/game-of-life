@@ -3,14 +3,14 @@ import React, { Component } from 'react';
 class Controls extends Component {
   
   render() {
-    const { running,
-            toggleRunning,
+    const { isRunning,
+            toggleIsRunning,
             reset } = this.props;
     
     return (
       <div className="Controls">
-        <button onClick={toggleRunning}>
-          {running ? "Pause" : "Play"}
+        <button onClick={toggleIsRunning}>
+          {isRunning ? "Pause" : "Play"}
         </button>
         <button onClick={reset}>Reset</button>
       </div>

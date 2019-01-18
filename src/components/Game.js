@@ -8,7 +8,7 @@ class Game extends Component {
     super(props);
     this.state = {
       size: 40,
-      running: false,
+      isRunning: false,
       frameRate: 5, // steps per second
     };
   }
@@ -23,11 +23,11 @@ class Game extends Component {
     });
   }
   
-  toggleRunning = () => {
+  toggleIsRunning = () => {
     this.setState((state, props) => ({
-      running: ! state.running
+      isRunning: ! state.isRunning
     }), () => (
-      this.state.running ? this.play() : this.pause()
+      this.state.isRunning ? this.play() : this.pause()
     ));
   }
 
@@ -97,14 +97,14 @@ class Game extends Component {
   }
   
   render() {
-    const { running, table } = this.state;
+    const { isRunning, table } = this.state;
     
     return (
       <Fragment>
         <Board table={table}
                toggleCellFn={this.toggleCell} />
-        <Controls running={running}
-                  toggleRunning={this.toggleRunning}
+        <Controls isRunning={isRunning}
+                  toggleIsRunning={this.toggleIsRunning}
                   reset={this.resetTable} />
       </Fragment>
     );
